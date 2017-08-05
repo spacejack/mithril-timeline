@@ -1,0 +1,30 @@
+{
+  "name": "mithril-timeline",
+  "version": "0.1.0",
+  "description": "Mithril Timeline Experiments",
+  "main": "index.js",
+  "scripts": {
+    "compile": "browserify --debug src/ts/index.ts -p [ tsify --project src/ts/tsconfig.json ] -o public/js/app.js",
+    "build": "browserify src/ts/index.ts -p [ tsify --project src/ts/tsconfig.json ] | uglifyjs -cm -o public/js/app.js",
+    "clean": "rm -f public/js/app.js",
+    "start": "budo src/ts/index.ts:js/app.js -p 3000 --dir public --live=*.{html,css} -- --debug -p [ browserify-hmr ] -p [ tsify --project src/ts/tsconfig.json ]"
+  },
+  "keywords": [],
+  "author": "spacejack",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/howler": "^2.0.2",
+    "@types/mithril": "^1.1.7",
+    "browserify": "^14.4.0",
+    "browserify-hmr": "^0.3.5",
+    "budo": "^10.0.4",
+    "npm-run-all": "^4.0.2",
+    "tsify": "^3.0.1",
+    "tslint": "^4.5.1",
+    "typescript": "^2.4.2",
+    "uglify-js": "^3.0.27"
+  },
+  "dependencies": {
+    "mithril": "^1.1.3"
+  }
+}
