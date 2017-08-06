@@ -1,4 +1,4 @@
-export type CancelablePromise<T> = Promise<T> & {
+export type TimelinePromise<T> = Promise<T> & {
 	cancel(): void
 	canceled: Promise<void>
 }
@@ -13,9 +13,12 @@ function CancelToken() {
 
 function Delay (canceled: Promise<void>) {
 	return (ms: number) => {
-		let timer: number
+		let timer: number | undefined
 		canceled.then(() => {
-			clearTimeout(timer)
+			if (timer != null) {
+				clearTimeout(timer)
+				timer = undefined
+			}
 		})
 		return new Promise<void>(resolve => {
 			timer = setTimeout(resolve, ms)
@@ -34,7 +37,7 @@ export function Timeline<T>(
 	function delay (ms: number) {
 		return Delay(canceled)(ms)
 	}
-	const cp: CancelablePromise<T> = f(delay, cancel, canceled) as any
+	const cp: TimelinePromise<T> = f(delay, cancel, canceled) as any
 	cp.cancel = cancel
 	cp.canceled = canceled
 	return cp

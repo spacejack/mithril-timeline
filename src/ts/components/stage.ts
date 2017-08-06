@@ -1,5 +1,5 @@
 import * as m from 'mithril'
-import {CancelablePromise, Timeline} from '../lib/timeline'
+import {TimelinePromise, Timeline} from '../lib/timeline'
 import {sounds} from '../lib/audio'
 import fader from './fader'
 
@@ -11,57 +11,54 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		sound1: false,
 		sound2: false
 	}
-	let timeline: CancelablePromise<void> | undefined
 
-	function runTimeline (dom: HTMLElement) {
-		timeline = Timeline(async (delay) => {
-			// Timeline "Keyframes"
-			await delay(750)
-			show.title1 = true
-			m.redraw()
+	let timeline: TimelinePromise<void> | undefined = Timeline(async (delay) => {
+		// Timeline "Keyframes"
+		await delay(750)
+		show.title1 = true
+		m.redraw()
 
-			await delay(1500)
-			show.title2 = true
-			m.redraw()
+		await delay(1500)
+		show.title2 = true
+		m.redraw()
 
-			await delay(1500)
-			show.title1 = false
-			m.redraw()
+		await delay(1500)
+		show.title1 = false
+		m.redraw()
 
-			await delay(1000)
-			show.title2 = false
-			m.redraw()
+		await delay(1000)
+		show.title2 = false
+		m.redraw()
 
-			await delay(750)
-			const dur1 = sounds.sound1.duration() * 1000
-			sounds.sound1.play()
-			show.sound1 = true
-			m.redraw()
+		await delay(750)
+		const dur1 = sounds.sound1.duration() * 1000
+		sounds.sound1.play()
+		show.sound1 = true
+		m.redraw()
 
-			await delay(dur1)
-			show.sound1 = false
-			const dur2 = sounds.sound2.duration() * 1000
-			sounds.sound2.play()
-			show.sound2 = true
-			m.redraw()
+		await delay(dur1)
+		show.sound1 = false
+		const dur2 = sounds.sound2.duration() * 1000
+		sounds.sound2.play()
+		show.sound2 = true
+		m.redraw()
 
-			await delay(dur2)
-			show.sound2 = false
-			m.redraw()
-		})
+		await delay(dur2)
+		show.sound2 = false
+		m.redraw()
+	})
 
-		timeline.canceled.then(() => {
-			// Cancel anything that may need to be canceled.
-			// This is a bit ugly because we may not be sure...
-			sounds.sound1.stop()
-			sounds.sound2.stop()
-			timeline = undefined
-		})
+	timeline.canceled.then(() => {
+		// Cancel anything that may need to be canceled.
+		// This is a bit ugly because we may not be sure...
+		sounds.sound1.stop()
+		sounds.sound2.stop()
+		timeline = undefined
+	})
 
-		timeline.then(() => {
-			timeline = undefined
-		})
-	}
+	timeline.then(() => {
+		timeline = undefined
+	})
 
 	function cancelTimeline() {
 		timeline && timeline.cancel()
@@ -85,9 +82,6 @@ const stage: m.FactoryComponent<{}> = function stage() {
 
 	// Return component hooks
 	return {
-		oncreate: (vnode) => {
-			runTimeline(vnode.dom as HTMLElement)
-		},
 		onremove: cancelTimeline,
 		view: render
 	}

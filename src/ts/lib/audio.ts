@@ -2,13 +2,15 @@ const soundFiles = ['sound1.mp3', 'sound2.mp3', 'sound3.mp3']
 
 export const sounds: {[id: string]: Howl} = {}
 
-export function loadSounds(): Promise<void> {
-	return Promise.all(soundFiles.map(url => loadSound('data/' + url)))
-		.then(s => {
-			sounds.sound1 = s[0]
-			sounds.sound2 = s[1]
-			sounds.sound3 = s[2]
-		})
+export function loadSounds(): Promise<Howl[]> {
+	return Promise.all(
+		soundFiles.map(fname => loadSound('data/' + fname))
+	).then(s => {
+		sounds.sound1 = s[0]
+		sounds.sound2 = s[1]
+		sounds.sound3 = s[2]
+		return s
+	})
 }
 
 export function loadSound (url: string): Promise<Howl> {
