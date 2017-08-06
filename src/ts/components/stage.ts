@@ -12,7 +12,7 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		sound2: false
 	}
 
-	let timeline: TimelinePromise<void> | undefined = Timeline(async (delay, playSound) => {
+	const timeline = Timeline(async (delay, playSound) => {
 		// Timeline "Keyframes"
 		await delay(750)
 		show.title1 = true
@@ -37,19 +37,10 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		show.sound2 = false
 	})
 
-	timeline.canceled.then(() => {
-		// Sounds automatically stopped by Timeline
-		timeline = undefined
-	})
-
-	timeline.then(() => {
-		timeline = undefined
-	})
-
 	// Return component hooks
 	return {
 		onremove() {
-			timeline && timeline.cancel()
+			timeline.cancel()
 		},
 		view() {
 			return m('.stage', [
