@@ -23,8 +23,8 @@ function Delay (canceled: Promise<void>) {
 		return new Promise<void>(resolve => {
 			timer = setTimeout(
 				() => {
-					resolve()
 					timer = undefined
+					resolve()
 				},
 				ms
 			)
@@ -38,17 +38,17 @@ function PlaySound (canceled: Promise<void>) {
 		let timer: number | undefined
 		canceled.then(() => {
 			if (timer != null) {
+				sound.stop()
 				clearTimeout(timer)
 				timer = undefined
-				sound.stop()
 			}
 		})
 		return new Promise<void>(resolve => {
 			sound.play()
 			timer = setTimeout(
 				() => {
-					resolve()
 					timer = undefined
+					resolve()
 				},
 				ms
 			)
