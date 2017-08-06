@@ -60,23 +60,19 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		timeline = undefined
 	})
 
-	function cancelTimeline() {
-		timeline && timeline.cancel()
-	}
-
-	function render() {
-		return m('.stage', [
-			show.title1 && m(fader, {selector: '.title1'}, "This is a Title"),
-			show.title2 && m(fader, {selector: '.title2'}, "This is another Title"),
-			show.sound1 && m(fader, {selector: '.sound1', duration: '1s'}, "Playing sound one"),
-			show.sound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two")
-		])
-	}
-
 	// Return component hooks
 	return {
-		onremove: cancelTimeline,
-		view: render
+		onremove() {
+			timeline && timeline.cancel()
+		},
+		view() {
+			return m('.stage', [
+				show.title1 && m(fader, {selector: '.title1'}, "This is a Title"),
+				show.title2 && m(fader, {selector: '.title2'}, "This is another Title"),
+				show.sound1 && m(fader, {selector: '.sound1', duration: '1s'}, "Playing sound one"),
+				show.sound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two")
+			])
+		}
 	}
 }
 

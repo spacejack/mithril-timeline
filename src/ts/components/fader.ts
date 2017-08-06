@@ -2,7 +2,7 @@ import * as m from 'mithril'
 import {waitFrames} from '../lib/wait'
 
 export interface Attrs {
-	selector: string,
+	selector?: string,
 	duration?: string
 }
 
@@ -18,17 +18,13 @@ export default {
 	},
 	onbeforeremove({dom}) {
 		(dom as HTMLElement).style.opacity = '0'
-		return new Promise<Event>(resolve => {
+		return new Promise(resolve => {
 			dom.addEventListener('transitionend', resolve)
 		})
 	},
-	view({attrs: {selector, duration = '0.25s'}, children}) {
+	view({attrs: {selector = 'div', duration = '0.25s'}, children}) {
 		return m(selector,
-			{
-				style: {
-					transition: 'opacity ' + duration
-				}
-			},
+			{style: {transition: 'opacity ' + duration}},
 			children
 		)
 	}
