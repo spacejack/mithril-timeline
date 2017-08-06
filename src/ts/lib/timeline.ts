@@ -21,7 +21,37 @@ function Delay (canceled: Promise<void>) {
 			}
 		})
 		return new Promise<void>(resolve => {
-			timer = setTimeout(resolve, ms)
+			timer = setTimeout(
+				() => {
+					resolve()
+					timer = undefined
+				},
+				ms
+			)
+		})
+	}
+}
+
+function PlaySound (canceled: Promise<void>) {
+	return (sound: Howl) => {
+		const ms = Math.round(sound.duration() * 1000)
+		let timer: number | undefined
+		canceled.then(() => {
+			if (timer != null) {
+				clearTimeout(timer)
+				timer = undefined
+				sound.stop()
+			}
+		})
+		return new Promise<void>(resolve => {
+			sound.play()
+			timer = setTimeout(
+				() => {
+					resolve()
+					timer = undefined
+				},
+				ms
+			)
 		})
 	}
 }
@@ -29,6 +59,7 @@ function Delay (canceled: Promise<void>) {
 export function Timeline<T>(
 	f: (
 		delay: (ms: number) => Promise<void>,
+		playSound: (sound: Howl) => Promise<void>,
 		cancel: () => void,
 		canceled: Promise<void>
 	) => Promise<T>
@@ -37,7 +68,10 @@ export function Timeline<T>(
 	function delay (ms: number) {
 		return Delay(canceled)(ms)
 	}
-	const cp: TimelinePromise<T> = f(delay, cancel, canceled) as any
+	function playSound (sound: Howl) {
+		return PlaySound(canceled)(sound)
+	}
+	const cp: TimelinePromise<T> = f(delay, playSound, cancel, canceled) as any
 	cp.cancel = cancel
 	cp.canceled = canceled
 	return cp

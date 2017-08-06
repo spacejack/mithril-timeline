@@ -12,7 +12,7 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		sound2: false
 	}
 
-	let timeline: TimelinePromise<void> | undefined = Timeline(async (delay) => {
+	let timeline: TimelinePromise<void> | undefined = Timeline(async (delay, playSound) => {
 		// Timeline "Keyframes"
 		await delay(750)
 		show.title1 = true
@@ -31,28 +31,21 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		m.redraw()
 
 		await delay(750)
-		const dur1 = sounds.sound1.duration() * 1000
-		sounds.sound1.play()
 		show.sound1 = true
 		m.redraw()
 
-		await delay(dur1)
+		await playSound(sounds.sound1)
 		show.sound1 = false
-		const dur2 = sounds.sound2.duration() * 1000
-		sounds.sound2.play()
 		show.sound2 = true
 		m.redraw()
 
-		await delay(dur2)
+		await playSound(sounds.sound2)
 		show.sound2 = false
 		m.redraw()
 	})
 
 	timeline.canceled.then(() => {
-		// Cancel anything that may need to be canceled.
-		// This is a bit ugly because we may not be sure...
-		sounds.sound1.stop()
-		sounds.sound2.stop()
+		// Sounds automatically stopped by Timeline
 		timeline = undefined
 	})
 
