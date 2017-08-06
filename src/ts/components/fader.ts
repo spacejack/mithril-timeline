@@ -9,9 +9,11 @@ export interface Attrs {
 /** A component that fades-in and fades-out */
 export default {
 	oncreate({dom}) {
+		const style = (dom as HTMLElement).style
+		style.opacity = '0'
 		waitFrames(2).then(() => {
 			// Must wait 2 frames for CSS transition to work
-			(dom as HTMLElement).style.opacity = '1'
+			style.opacity = '1'
 		})
 	},
 	onbeforeremove({dom}) {
@@ -24,7 +26,6 @@ export default {
 		return m(selector,
 			{
 				style: {
-					opacity: '0',
 					transition: 'opacity ' + duration
 				}
 			},

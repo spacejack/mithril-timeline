@@ -66,18 +66,11 @@ const stage: m.FactoryComponent<{}> = function stage() {
 
 	function render() {
 		return m('.stage', [
-			show.title1 && m('.title1', "This is a Title"),
-			show.title2 && m('.title2', "This is another Title"),
-			show.sound1 && m('.sound1', "Playing sound one"),
-			show.sound2 && m('.sound2', "Now playing sound two")
+			show.title1 && m(fader, {selector: '.title1'}, "This is a Title"),
+			show.title2 && m(fader, {selector: '.title2'}, "This is another Title"),
+			show.sound1 && m(fader, {selector: '.sound1', duration: '1s'}, "Playing sound one"),
+			show.sound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two")
 		])
-		// Why isn't this working??
-		/* return m('.stage', [
-			showTitle1 && m(fader, {selector: '.title1'}, "This is a Title"),
-			showTitle2 && m(fader, {selector: '.title2'}, "This is another Title"),
-			showSound1 && m(fader, {selector: '.sound1', duration: '1s'}, "Playing sound one"),
-			showSound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two")
-		]) */
 	}
 
 	// Return component hooks
