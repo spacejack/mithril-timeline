@@ -16,32 +16,25 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		// Timeline "Keyframes"
 		await delay(750)
 		show.title1 = true
-		m.redraw()
 
 		await delay(1500)
 		show.title2 = true
-		m.redraw()
 
 		await delay(1500)
 		show.title1 = false
-		m.redraw()
 
 		await delay(1000)
 		show.title2 = false
-		m.redraw()
 
 		await delay(750)
 		show.sound1 = true
-		m.redraw()
 
 		await playSound(sounds.sound1)
 		show.sound1 = false
 		show.sound2 = true
-		m.redraw()
 
 		await playSound(sounds.sound2)
 		show.sound2 = false
-		m.redraw()
 	})
 
 	timeline.canceled.then(() => {

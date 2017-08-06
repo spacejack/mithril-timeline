@@ -1,3 +1,5 @@
+import * as m from 'mithril'
+
 export type TimelinePromise<T> = Promise<T> & {
 	cancel(): void
 	canceled: Promise<void>
@@ -24,6 +26,7 @@ function Delay (canceled: Promise<void>) {
 			timer = setTimeout(
 				() => {
 					timer = undefined
+					requestAnimationFrame(() => {m.redraw()})
 					resolve()
 				},
 				ms
@@ -48,6 +51,7 @@ function PlaySound (canceled: Promise<void>) {
 			timer = setTimeout(
 				() => {
 					timer = undefined
+					requestAnimationFrame(() => {m.redraw()})
 					resolve()
 				},
 				ms
