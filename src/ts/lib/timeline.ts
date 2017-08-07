@@ -1,5 +1,3 @@
-import * as m from 'mithril'
-
 export type EmitterCallback = () => void
 
 export interface Emitter {
@@ -64,7 +62,6 @@ function Delay<T,U> (canceled: Promise<void>, paused: Emitter, resumed: Emitter)
 				timer = setTimeout(
 					() => {
 						timer = undefined
-						requestAnimationFrame(() => {m.redraw()})
 						complete()
 					},
 					tRemain
@@ -81,7 +78,6 @@ function Delay<T,U> (canceled: Promise<void>, paused: Emitter, resumed: Emitter)
 		timer = setTimeout(
 			() => {
 				timer = undefined
-				requestAnimationFrame(() => {m.redraw()})
 				complete()
 			},
 			ms
@@ -123,7 +119,6 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 				timer = setTimeout(
 					() => {
 						timer = undefined
-						requestAnimationFrame(() => {m.redraw()})
 						complete()
 					},
 					tRemain
@@ -141,7 +136,6 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 		timer = setTimeout(
 			() => {
 				timer = undefined
-				requestAnimationFrame(() => {m.redraw()})
 				complete()
 			},
 			ms

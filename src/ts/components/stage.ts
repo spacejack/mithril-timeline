@@ -1,16 +1,28 @@
 import * as m from 'mithril'
-import {TimelinePromise, Timeline} from '../lib/timeline'
+import * as stream from 'mithril/stream'
+import {Stream} from 'mithril/stream'
+import {Timeline} from '../lib/timeline'
 import {sounds} from '../lib/audio'
 import fader from './fader'
 
+// Immutable timeline state object
+interface State {
+	readonly title1: boolean
+	readonly title2: boolean
+	readonly sound1: boolean
+	readonly sound2: boolean
+}
+
 const stage: m.FactoryComponent<{}> = function stage() {
 	// show/hide flags
-	const show = {
+	const state: Stream<State> = stream({
 		title1: false,
 		title2: false,
 		sound1: false,
 		sound2: false
-	}
+	})
+	// Redraw on state changes
+	state.map(s => {m.redraw()})
 
 	let paused = false
 	let completed = false
@@ -18,29 +30,31 @@ const stage: m.FactoryComponent<{}> = function stage() {
 	const timeline = Timeline(async (delay, playSound) => {
 		// Timeline "Keyframes"
 		await delay(750)
-		show.title1 = true
+		state({...state(), title1: true})
 
 		await delay(1500)
-		show.title2 = true
+		state({...state(), title2: true})
 
 		await delay(1500)
-		show.title1 = false
+		state({...state(), title1: false})
 
 		await delay(1000)
-		show.title2 = false
+		state({...state(), title2: false})
 
 		await delay(750)
-		show.sound1 = true
+		state({...state(), sound1: true})
 
 		await playSound(sounds.sound1)
-		show.sound1 = false
-		show.sound2 = true
+		state({...state(), sound1: false, sound2: true})
 
 		await playSound(sounds.sound2)
-		show.sound2 = false
+		state({...state(), sound2: false})
 	})
 
-	timeline.then(() => {completed = true})
+	timeline.then(() => {
+		completed = true
+		m.redraw()
+	})
 
 	// Return component hooks
 	return {
@@ -48,11 +62,12 @@ const stage: m.FactoryComponent<{}> = function stage() {
 			timeline.cancel()
 		},
 		view() {
+			const s = state()
 			return m('.stage', [
-				show.title1 && m(fader, {selector: '.title1'}, "This is a Title"),
-				show.title2 && m(fader, {selector: '.title2'}, "This is another Title"),
-				show.sound1 && m(fader, {selector: '.sound1', duration: '1s'}, "Playing sound one"),
-				show.sound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two"),
+				s.title1 && m(fader, {selector: '.title1'}, "This is a Title"),
+				s.title2 && m(fader, {selector: '.title2'}, "This is another Title"),
+				s.sound1 && m(fader, {selector: '.sound1', duration: '1s'}, "Playing sound one"),
+				s.sound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two"),
 				!completed && m('button.btn-pause',
 					{
 						onclick() {
