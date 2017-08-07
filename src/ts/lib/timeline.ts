@@ -39,7 +39,7 @@ function CancelToken() {
 function Delay<T,U> (canceled: Promise<void>, paused: Emitter, resumed: Emitter) {
 	return (ms: number) => {
 		let timer: number | undefined
-		let tStart: number | undefined
+		let tStart = 0
 		let tRemain: number | undefined
 		let complete: () => void
 
@@ -53,7 +53,7 @@ function Delay<T,U> (canceled: Promise<void>, paused: Emitter, resumed: Emitter)
 		paused.onemit(() => {
 			if (tRemain == null && timer != null) {
 				const t = Date.now()
-				tRemain = ms - (t - tStart!)
+				tRemain = ms - (t - tStart)
 				clearTimeout(timer)
 				timer = undefined
 			}
@@ -95,7 +95,7 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 	return (sound: Howl) => {
 		const ms = Math.round(sound.duration() * 1000)
 		let timer: number | undefined
-		let tStart: number | undefined
+		let tStart = 0
 		let tRemain: number | undefined
 		let complete: () => void
 
@@ -111,7 +111,7 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 			if (tRemain == null && timer != null) {
 				sound.pause()
 				const t = Date.now()
-				tRemain = ms - (t - tStart!)
+				tRemain = ms - (t - tStart)
 				clearTimeout(timer)
 				timer = undefined
 			}
