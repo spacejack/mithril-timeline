@@ -55,3 +55,9 @@ body {
 	left: 6em;
 	bottom: 10em;
 }
+
+.btn-pause {
+	position: absolute;
+	right: 1em;
+	bottom: 1em;
+}

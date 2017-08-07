@@ -12,6 +12,9 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		sound2: false
 	}
 
+	let paused = false
+	let completed = false
+
 	const timeline = Timeline(async (delay, playSound) => {
 		// Timeline "Keyframes"
 		await delay(750)
@@ -37,6 +40,8 @@ const stage: m.FactoryComponent<{}> = function stage() {
 		show.sound2 = false
 	})
 
+	timeline.then(() => {completed = true})
+
 	// Return component hooks
 	return {
 		onremove() {
@@ -47,7 +52,17 @@ const stage: m.FactoryComponent<{}> = function stage() {
 				show.title1 && m(fader, {selector: '.title1'}, "This is a Title"),
 				show.title2 && m(fader, {selector: '.title2'}, "This is another Title"),
 				show.sound1 && m(fader, {selector: '.sound1', duration: '1s'}, "Playing sound one"),
-				show.sound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two")
+				show.sound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two"),
+				!completed && m('button.btn-pause',
+					{
+						onclick() {
+							paused = !paused
+							if (paused) timeline.pause()
+							else timeline.resume()
+						}
+					},
+					paused ? "resume" : "pause"
+				)
 			])
 		}
 	}
