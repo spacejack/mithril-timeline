@@ -101,6 +101,11 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 				clearTimeout(timer)
 				timer = undefined
 			}
+			if (tRemain != null) {
+				// Reset playhead of paused sound
+				sound.stop()
+				tRemain = undefined
+			}
 		})
 
 		paused.onemit(() => {
