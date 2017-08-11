@@ -1,7 +1,7 @@
-import * as m from 'mithril'
+import * as Preact from 'preact'
 import app from './components/app'
 import {loadSounds} from './lib/audio'
 
 loadSounds().then(() => {
-	m.mount(document.body, app)
+	Preact.render(Preact.h(app, {}), document.body)
 })

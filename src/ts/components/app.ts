@@ -1,27 +1,40 @@
-import * as m from 'mithril'
+import {h, Component} from 'preact'
 import stage from './stage'
 
-let showStage = false
+//let showStage = false
 
-export default {
-	view() {
-		return m('.app',
-			m('h1', "Mithril Timeline Expermient"),
-			m('.stage-container',
-				showStage && m(stage)
+export interface State {
+	showStage: boolean
+}
+
+export default class App extends Component<{},State> {
+	constructor() {
+		super()
+		this.setState({showStage: false})
+	}
+
+	render() {
+		return h('div', {className: 'app'},
+			h('h1', {}, "Preact Timeline Expermient"),
+			h('div', {className: 'stage-container'},
+				this.state.showStage ? h(stage, {}) : h('div', {})
 			),
-			m('.cpanel',
-				m('button',
+			h('div', {className: 'cpanel'},
+				h('button',
 					{
-						disabled: showStage,
-						onclick: () => {showStage = true}
+						disabled: this.state.showStage,
+						onClick: () => {
+							this.setState({showStage: true})
+						}
 					},
 					"Open Stage"
 				),
-				m('button',
+				h('button',
 					{
-						disabled: !showStage,
-						onclick: () => {showStage = false}
+						disabled: !this.state.showStage,
+						onClick: () => {
+							this.setState({showStage: false})
+						}
 					},
 					"Close Stage"
 				)

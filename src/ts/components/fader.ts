@@ -1,31 +1,31 @@
-import * as m from 'mithril'
+import {h, Component} from 'preact'
 import {waitFrames} from '../lib/wait'
 
-export interface Attrs {
-	selector?: string,
+export interface Props {
+	className?: string,
 	duration?: string
 }
 
-/** A component that fades-in and fades-out */
-export default {
-	oncreate({dom}) {
-		const style = (dom as HTMLElement).style
-		style.opacity = '0'
-		waitFrames(2).then(() => {
-			// Must wait 2 frames for CSS transition to work
-			style.opacity = '1'
-		})
-	},
-	onbeforeremove({dom}) {
-		(dom as HTMLElement).style.opacity = '0'
-		return new Promise(resolve => {
-			dom.addEventListener('transitionend', resolve)
-		})
-	},
-	view({attrs: {selector = 'div', duration = '0.25s'}, children}) {
-		return m(selector,
-			{style: {transition: 'opacity ' + duration}},
-			children
+export default class Fader extends Component<Props,{}> {
+	div: HTMLDivElement
+
+	componentDidMount() {
+		waitFrames(2).then(() =>  {this.div.style.opacity = '1'})
+	}
+
+	// TODO: Exit animation (fade-out)
+	/* componentWillUnmount() {
+		this.div.style.opacity = '0'
+	} */
+
+	render() {
+		return h('div',
+			{
+				ref: div => {this.div = div as HTMLDivElement},
+				className: this.props.className || '',
+				style: `transition: opacity ${this.props.duration || '0.25s'}; opacity: 0`
+			},
+			this.props.children || h('div', {})
 		)
 	}
-} as m.Component<Attrs,{}>
+}

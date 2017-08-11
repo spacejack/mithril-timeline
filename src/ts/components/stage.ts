@@ -1,7 +1,5 @@
-import * as m from 'mithril'
-import * as stream from 'mithril/stream'
-import {Stream} from 'mithril/stream'
-import {Timeline} from '../lib/timeline'
+import {h, Component} from 'preact'
+import {Timeline, TimelinePromise} from '../lib/timeline'
 import {sounds} from '../lib/audio'
 import fader from './fader'
 
@@ -11,76 +9,80 @@ interface State {
 	readonly title2: boolean
 	readonly sound1: boolean
 	readonly sound2: boolean
+	readonly completed: boolean
+	readonly paused: boolean
 }
 
-const stage: m.FactoryComponent<{}> = function stage() {
-	// show/hide flags
-	const state: Stream<State> = stream({
-		title1: false,
-		title2: false,
-		sound1: false,
-		sound2: false
-	})
-	// Redraw on state changes
-	state.map(s => {m.redraw()})
+export default class Stage extends Component<{},State> {
+	protected timeline: TimelinePromise<void>
 
-	let paused = false
-	let completed = false
+	constructor() {
+		super()
 
-	const timeline = Timeline(async (delay, playSound) => {
-		// Timeline "Keyframes"
-		await delay(750)
-		state({...state(), title1: true})
-
-		await delay(1500)
-		state({...state(), title2: true})
-
-		await delay(1500)
-		state({...state(), title1: false})
-
-		await delay(1000)
-		state({...state(), title2: false})
-
-		await delay(750)
-		state({...state(), sound1: true})
-
-		await playSound(sounds.sound1)
-		state({...state(), sound1: false, sound2: true})
-
-		await playSound(sounds.sound2)
-		state({...state(), sound2: false})
-	})
-
-	timeline.then(() => {
-		completed = true
-		m.redraw()
-	})
-
-	// Return component hooks
-	return {
-		onremove() {
-			timeline.cancel()
-		},
-		view() {
-			const s = state()
-			return m('.stage', [
-				s.title1 && m(fader, {selector: '.title1'}, "This is a Title"),
-				s.title2 && m(fader, {selector: '.title2'}, "This is another Title"),
-				s.sound1 && m(fader, {selector: '.sound1', duration: '1s'}, "Playing sound one"),
-				s.sound2 && m(fader, {selector: '.sound2', duration: '1s'}, "Now playing sound two"),
-				!completed && m('button.btn-pause',
-					{
-						onclick() {
-							paused = !paused
-							if (paused) timeline.pause()
-							else timeline.resume()
-						}
-					},
-					paused ? "resume" : "pause"
-				)
-			])
+		this.state = {
+			title1: false,
+			title2: false,
+			sound1: false,
+			sound2: false,
+			completed: false,
+			paused: false
 		}
+
+		this.timeline = Timeline(async (delay, playSound) => {
+			// Timeline "Keyframes"
+			await delay(750)
+			this.setState({title1: true})
+
+			await delay(1500)
+			this.setState({title2: true})
+
+			await delay(1500)
+			this.setState({title1: false})
+
+			await delay(1000)
+			this.setState({title2: false})
+
+			await delay(750)
+			this.setState({sound1: true})
+
+			await playSound(sounds.sound1)
+			this.setState({sound1: false, sound2: true})
+
+			await playSound(sounds.sound2)
+			this.setState({sound2: false})
+		})
+
+		this.timeline.then(() => {
+			this.setState({completed: true})
+		})
+	}
+
+	componentWillUnmount() {
+		this.timeline.cancel()
+	}
+
+	render() {
+		const s = this.state
+		return h('div', {className: 'stage'}, [
+			s.title1 ? h(fader, {className: 'title1', duration: '0.25s'}, "This is a Title") : h('div', {}),
+			s.title2 ? h(fader, {className: 'title2', duration: '0.25s'}, "This is another Title") : h('div', {}),
+			s.sound1 ? h(fader, {className: 'sound1', duration: '1s'}, "Playing sound one") : h('div', {}),
+			s.sound2 ? h(fader, {className: 'sound2', duration: '1s'}, "Now playing sound two") : h('div', {}),
+			!s.completed ? h('button',
+				{
+					className: 'btn-pause',
+					onclick: () => {
+						const paused = !s.paused
+						if (paused) {
+							this.timeline.pause()
+						} else {
+							this.timeline.resume()
+						}
+						this.setState({paused})
+					}
+				},
+				s.paused ? "resume" : "pause"
+			) :  h('div', {})
+		])
 	}
 }
-
-export default stage
