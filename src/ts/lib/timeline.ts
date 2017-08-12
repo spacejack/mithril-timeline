@@ -38,6 +38,7 @@ function Delay<T,U> (canceled: Promise<void>, paused: Emitter, resumed: Emitter)
 	return (ms: number) => {
 		let timer: number | undefined
 		let tStart = 0
+		let tPaused = 0
 		let tRemain: number | undefined
 		let complete: () => void
 
@@ -50,8 +51,8 @@ function Delay<T,U> (canceled: Promise<void>, paused: Emitter, resumed: Emitter)
 
 		paused.onemit(() => {
 			if (tRemain == null && timer != null) {
-				const t = Date.now()
-				tRemain = ms - (t - tStart)
+				tPaused = Date.now()
+				tRemain = ms - (tPaused - tStart)
 				clearTimeout(timer)
 				timer = undefined
 			}
@@ -59,7 +60,10 @@ function Delay<T,U> (canceled: Promise<void>, paused: Emitter, resumed: Emitter)
 
 		resumed.onemit(() => {
 			if (tRemain != null) {
-				timer = setTimeout(
+				const t = Date.now()
+				// Must shift start time forward
+				tStart += t - tPaused
+				timer = window.setTimeout(
 					() => {
 						timer = undefined
 						complete()
@@ -75,7 +79,7 @@ function Delay<T,U> (canceled: Promise<void>, paused: Emitter, resumed: Emitter)
 		})
 
 		tStart = Date.now()
-		timer = setTimeout(
+		timer = window.setTimeout(
 			() => {
 				timer = undefined
 				complete()
@@ -92,6 +96,7 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 		const ms = Math.round(sound.duration() * 1000)
 		let timer: number | undefined
 		let tStart = 0
+		let tPaused = 0
 		let tRemain: number | undefined
 		let complete: () => void
 
@@ -111,8 +116,8 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 		paused.onemit(() => {
 			if (tRemain == null && timer != null) {
 				sound.pause()
-				const t = Date.now()
-				tRemain = ms - (t - tStart)
+				tPaused = Date.now()
+				tRemain = ms - (tPaused - tStart)
 				clearTimeout(timer)
 				timer = undefined
 			}
@@ -120,8 +125,11 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 
 		resumed.onemit(() => {
 			if (tRemain != null) {
+				const t = Date.now()
+				// Must shift start time forward
+				tStart += t - tPaused
 				sound.play()
-				timer = setTimeout(
+				timer = window.setTimeout(
 					() => {
 						timer = undefined
 						complete()
@@ -138,7 +146,7 @@ function PlaySound (canceled: Promise<void>, paused: Emitter, resumed: Emitter) 
 
 		tStart = Date.now()
 		sound.play()
-		timer = setTimeout(
+		timer = window.setTimeout(
 			() => {
 				timer = undefined
 				complete()

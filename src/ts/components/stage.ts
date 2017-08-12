@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {createElement as h, Component} from 'react'
 import {Timeline, TimelinePromise} from '../lib/timeline'
 import {sounds} from '../lib/audio'
 import fader from './fader'
@@ -64,14 +64,14 @@ export default class Stage extends Component<{},State> {
 	render() {
 		const s = this.state
 		return h('div', {className: 'stage'}, [
-			s.title1 ? h(fader, {className: 'title1', duration: '0.25s'}, "This is a Title") : h('div', {}),
-			s.title2 ? h(fader, {className: 'title2', duration: '0.25s'}, "This is another Title") : h('div', {}),
-			s.sound1 ? h(fader, {className: 'sound1', duration: '1s'}, "Playing sound one") : h('div', {}),
-			s.sound2 ? h(fader, {className: 'sound2', duration: '1s'}, "Now playing sound two") : h('div', {}),
-			!s.completed ? h('button',
+			s.title1 && h(fader, {className: 'title1', duration: '0.25s'}, "This is a Title"),
+			s.title2 && h(fader, {className: 'title2', duration: '0.25s'}, "This is another Title"),
+			s.sound1 && h(fader, {className: 'sound1', duration: '1s'}, "Playing sound one"),
+			s.sound2 && h(fader, {className: 'sound2', duration: '1s'}, "Now playing sound two"),
+			!s.completed && h('button',
 				{
 					className: 'btn-pause',
-					onclick: () => {
+					onClick: () => {
 						const paused = !s.paused
 						if (paused) {
 							this.timeline.pause()
@@ -82,7 +82,7 @@ export default class Stage extends Component<{},State> {
 					}
 				},
 				s.paused ? "resume" : "pause"
-			) :  h('div', {})
+			)
 		])
 	}
 }

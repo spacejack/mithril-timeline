@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {createElement as h, Component} from 'react'
 import stage from './stage'
 
 //let showStage = false
@@ -10,14 +10,14 @@ export interface State {
 export default class App extends Component<{},State> {
 	constructor() {
 		super()
-		this.setState({showStage: false})
+		this.state = {showStage: false}
 	}
 
 	render() {
 		return h('div', {className: 'app'},
 			h('h1', {}, "Preact Timeline Expermient"),
 			h('div', {className: 'stage-container'},
-				this.state.showStage ? h(stage, {}) : h('div', {})
+				this.state.showStage && h(stage, {})
 			),
 			h('div', {className: 'cpanel'},
 				h('button',

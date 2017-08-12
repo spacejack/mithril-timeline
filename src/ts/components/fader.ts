@@ -1,4 +1,4 @@
-import {h, Component} from 'preact'
+import {createElement as h, Component} from 'react'
 import {waitFrames} from '../lib/wait'
 
 export interface Props {
@@ -6,10 +6,11 @@ export interface Props {
 	duration?: string
 }
 
-export default class Fader extends Component<Props,{}> {
+export default class Fader extends Component<Props> {
 	div: HTMLDivElement
 
 	componentDidMount() {
+		this.div.style.opacity = '0'
 		waitFrames(2).then(() =>  {this.div.style.opacity = '1'})
 	}
 
@@ -21,11 +22,14 @@ export default class Fader extends Component<Props,{}> {
 	render() {
 		return h('div',
 			{
-				ref: div => {this.div = div as HTMLDivElement},
+				ref: (div: HTMLDivElement) => {this.div = div},
 				className: this.props.className || '',
-				style: `transition: opacity ${this.props.duration || '0.25s'}; opacity: 0`
+				style: {
+					transition: 'opacity ' + (this.props.duration || '0.25s')
+					//opacity: 0
+				}
 			},
-			this.props.children || h('div', {})
+			this.props.children
 		)
 	}
 }

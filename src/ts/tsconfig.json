@@ -4,11 +4,9 @@
     "module": "commonjs",
     "lib": ["es2015", "dom"],
     "strict": true,
-    "suppressImplicitAnyIndexErrors": true,
-    //"typeRoots" : ["./typings/", "../../node_modules/@types/"]
-    "baseUrl" : "./typings"
+    "suppressImplicitAnyIndexErrors": true
   },
-  "files": ["index.ts"],
+  //"files": ["index.ts"],
   "compileOnSave": false,
   "buildOnSave": false,
   "atom": {

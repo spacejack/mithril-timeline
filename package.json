@@ -14,6 +14,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/howler": "^2.0.2",
+    "@types/react": "^16.0.2",
+    "@types/react-dom": "^15.5.2",
     "browserify": "^14.4.0",
     "browserify-hmr": "^0.3.5",
     "budo": "^10.0.4",
@@ -24,7 +26,7 @@
     "uglify-js": "^3.0.27"
   },
   "dependencies": {
-    "preact": "^8.2.1",
-    "preact-dom": "^1.0.1"
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
   }
 }

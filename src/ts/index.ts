@@ -1,7 +1,8 @@
-import * as Preact from 'preact'
+import {createElement as h} from 'react'
+import {render} from 'react-dom'
 import app from './components/app'
 import {loadSounds} from './lib/audio'
 
 loadSounds().then(() => {
-	Preact.render(Preact.h(app, {}), document.body)
+	render(h(app, {}), document.body)
 })
